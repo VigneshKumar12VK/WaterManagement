@@ -1,0 +1,26 @@
+<div class="login-page">
+<div class="login-container">
+  <h2>Login</h2>
+  <form class="login-form" #loginForm="ngForm" (ngSubmit)="loginForm.valid && login(loginForm)">
+    <label for="username">Email</label>
+    <input id="username" type="text" 
+    name="username" 
+    #username="ngModel"
+    [(ngModel)]="email"
+    autocomplete="off" required>
+
+    <label for="password">Password</label>
+    <div class="password-field">
+      <input id="password" type="password" 
+      #password="ngModel"
+      [(ngModel)]="passWord"           
+             name="password" vktoggle
+             autocomplete="off"
+             required>
+    </div>
+
+    <button type="submit">Login</button>
+  </form>
+</div>
+
+</div>

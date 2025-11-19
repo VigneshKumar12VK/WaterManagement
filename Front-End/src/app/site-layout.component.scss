@@ -1,0 +1,41 @@
+.site-header {
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+  color: #fff;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+}
+.site-header nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.menu {
+  list-style: none;
+  display: flex;
+  gap: 2.5rem;
+  margin: 0;
+  padding: 0;
+}
+.menu li a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.menu li a.active,
+.menu li a:hover {
+  background: rgba(255,255,255,0.15);
+}
+main {
+  padding: 2.5rem 2rem;
+  background: #f4f6fc;
+  min-height: 80vh;
+}
+body {
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  background: #f4f6fc;
+  margin: 0;
+}

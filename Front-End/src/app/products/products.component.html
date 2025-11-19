@@ -1,0 +1,36 @@
+<h2>Products</h2>
+<div class="products-actions">
+  <input type="text" placeholder="Search products..." [(ngModel)]="searchTerm" class="search-input" />
+  <button class="add-btn" (click)="openAddProduct()">Add Product</button>
+</div>
+<div class="products-grid">
+  <div class="product-card" *ngFor="let product of filteredProducts()">
+    <img *ngIf="product.imageUrl" [src]="product.imageUrl" alt="{{ product.name }}" class="product-image" />
+    <h3>{{ product.name }}</h3>
+    <p>Size: {{ product.size }}</p>
+    <p>Price: ₹{{ product.price }}</p>
+    <p>Stock: {{ product.stock }}</p>
+    <div class="card-actions">
+      <button class="edit-btn" (click)="openEditProduct(product)">Edit</button>
+      <button class="delete-btn" (click)="deleteProduct(product)">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Product Modal -->
+<div class="modal-backdrop" *ngIf="showModal">
+  <div class="modal">
+    <h3>{{ editMode ? 'Edit Product' : 'Add Product' }}</h3>
+    <form (ngSubmit)="saveProduct()" #productForm="ngForm">
+      <input type="text" placeholder="Name" [(ngModel)]="modalProduct.name" name="name" required />
+      <input type="text" placeholder="Size" [(ngModel)]="modalProduct.size" name="size" required />
+      <input type="number" placeholder="Price" [(ngModel)]="modalProduct.price" name="price" required min="0" />
+      <input type="number" placeholder="Stock" [(ngModel)]="modalProduct.stock" name="stock" required min="0" />
+      <input type="number" placeholder="Low Stock Threshold" [(ngModel)]="modalProduct.lowStockThreshold" name="lowStockThreshold" required min="0" />
+      <div class="modal-actions">
+        <button type="submit" class="add-btn">{{ editMode ? 'Update' : 'Add' }}</button>
+        <button type="button" class="delete-btn" (click)="closeModal()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>

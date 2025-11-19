@@ -1,0 +1,32 @@
+/* Styles for OrderHistoryComponent */
+:host {
+  display: block;
+  padding: 1rem;
+}
+
+.order-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.order-history-table th,
+.order-history-table td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.order-history-table th {
+  background: #f5f5f5;
+  font-weight: 600;
+}
+
+.order-history-table tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.order-status {
+  font-weight: bold;
+  color: #1976d2;
+}
