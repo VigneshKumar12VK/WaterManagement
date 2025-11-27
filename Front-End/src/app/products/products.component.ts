@@ -1,24 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { ProductsService, Product } from './products.service';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-products',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './products.component.html',
-  styleUrls: ['./products.component.scss']
+  styleUrls: ['./products.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ProductsComponent implements OnInit {
   products: Product[] = [];
   searchTerm: string = '';
 
-  showModal = false;
+  @ViewChild('productModal') productModal!: TemplateRef<any>;
+  @ViewChild('productForm') productForm!: NgForm;
+  modalRef?: BsModalRef;
   editMode = false;
   modalProduct: Partial<Product> = {};
 
-  constructor(private productsService: ProductsService) {}
+  constructor(private productsService: ProductsService, private bsModalService: BsModalService) { }
 
   ngOnInit() {
     this.productsService.getProducts().subscribe(data => {
@@ -38,21 +42,29 @@ export class ProductsComponent implements OnInit {
   openAddProduct() {
     this.editMode = false;
     this.modalProduct = {};
-    this.showModal = true;
+    this.modalRef = this.bsModalService.show(this.productModal);
   }
 
   openEditProduct(product: Product) {
     this.editMode = true;
     this.modalProduct = { ...product };
-    this.showModal = true;
+    this.modalRef = this.bsModalService.show(this.productModal);
   }
 
   closeModal() {
-    this.showModal = false;
+    if (this.modalRef) {
+      this.modalRef.hide();
+      this.modalRef = undefined;
+    }
     this.modalProduct = {};
   }
 
   saveProduct() {
+    if (this.productForm.invalid) {
+      this.productForm.control.markAllAsTouched();
+      return;
+    }
+
     if (this.editMode && this.modalProduct.id) {
       // Edit product
       this.productsService.editProduct(this.modalProduct as Product).subscribe(() => {

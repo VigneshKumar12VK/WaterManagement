@@ -165,7 +165,7 @@ Description (optional)
 
 5. User and Dealer Management
 
-Add/edit/delete dealers
+Add/edit/delete User type Dealer / Admin / User
 
 View order history
 

@@ -31,9 +31,27 @@ This Node.js backend provides RESTful endpoints for managing users, products, or
 - See `requirement.md` for SQL table definitions and relationships.
 
 ## Usage
-1. Start the server: `node index.js`
-2. Use tools like Postman to interact with the API endpoints.
-3. Update `.env` with your SQL Server database name.
+1. Install dependencies:
+
+```powershell
+npm install
+```
+
+2. Generate the Prisma client (the generator in `prisma/schema.prisma` writes into `prisma/generated`):
+
+```powershell
+npx prisma generate
+```
+
+3. (Optional) Pull the DB schema from an existing SQL Server:
+
+```powershell
+npx prisma db pull
+```
+
+4. Start the server: `node index.js`
+5. Use tools like Postman to interact with the API endpoints.
+6. Update `.env` with your SQL Server connection or copy `.env.example` and set values.
 
 ## Next Steps
 - Expand endpoints for payments, invoices, and reporting.

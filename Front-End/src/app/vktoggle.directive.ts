@@ -22,13 +22,14 @@ export class VktoggleDirective implements AfterViewInit, OnDestroy {
     this.renderer.addClass(this.toggleIcon, 'fa-eye');
     this.renderer.setAttribute(this.toggleIcon, 'role', 'button');
     this.renderer.setAttribute(this.toggleIcon, 'aria-label', 'Show or hide password');
-    this.renderer.setStyle(this.toggleIcon, 'position', 'absolute');
-    this.renderer.setStyle(this.toggleIcon, 'right', '-0.25rem');
-    this.renderer.setStyle(this.toggleIcon, 'top', '18%');
-   
-    this.renderer.setStyle(this.toggleIcon, 'cursor', 'pointer');
-    this.renderer.setStyle(this.toggleIcon, 'font-size', '1.2rem');
-    this.renderer.setStyle(this.toggleIcon, 'color', '#1976d2');
+    // this.renderer.setStyle(this.toggleIcon, 'position', 'absolute');
+    // this.renderer.setStyle(this.toggleIcon, 'right', '0.75rem');
+    // this.renderer.setStyle(this.toggleIcon, 'top', '18%');
+
+    // this.renderer.setStyle(this.toggleIcon, 'cursor', 'pointer');
+    // this.renderer.setStyle(this.toggleIcon, 'font-size', '1.2rem');
+    // this.renderer.setStyle(this.toggleIcon, 'color', '#1976d2');
+    this.renderer.addClass(this.toggleIcon, 'toggle-eye');
 
     const parent = this.renderer.parentNode(input);
     this.renderer.setStyle(parent, 'position', 'relative');

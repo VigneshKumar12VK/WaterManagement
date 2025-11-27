@@ -9,7 +9,28 @@
             "request": "launch",
             "name": "Launch Chrome against localhost",
             "url": "http://localhost:4200",
-            "webRoot": "${workspaceFolder}/Front-End"
+            "webRoot": "${workspaceFolder}/Front-End",
+            "preLaunchTask": "npm: start:frontend"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Server (nodemon)",
+            "runtimeExecutable": "${workspaceFolder}/Server/node_modules/.bin/nodemon.cmd",
+            "program": "${workspaceFolder}/Server/index.js",
+            "restart": true,
+            "cwd": "${workspaceFolder}/Server",
+            "envFile": "${workspaceFolder}/Server/.env",
+            "console": "integratedTerminal"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Launch Full Stack",
+            "configurations": [
+                "Launch Chrome against localhost",
+                "Launch Server (nodemon)"
+            ]
         }
     ]
 }

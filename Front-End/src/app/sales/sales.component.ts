@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-sales',
   standalone: true,
-  template: `<h2>Sales Page</h2>`
+  templateUrl: './sales.component.html',
+  styleUrls: ['./sales.component.scss']
 })
-export class SalesComponent {}
+export class SalesComponent { }

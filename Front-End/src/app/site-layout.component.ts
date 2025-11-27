@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router } from '@angular/router';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-site-layout',
@@ -9,4 +10,10 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './site-layout.component.html',
   styleUrls: ['./site-layout.component.scss']
 })
-export class SiteLayoutComponent {}
+export class SiteLayoutComponent {
+  constructor(private auth: AuthService, private router: Router) {}
+
+  logout() {
+    this.auth.logout();
+  }
+}

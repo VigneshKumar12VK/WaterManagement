@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+}
+
+model Invoices {
+  id          Int     @id(map: "PK__Invoices__3213E83F7A2809C9") @default(autoincrement())
+  orderId     Int
+  pdfUrl      String? @db.NVarChar(255)
+  sentToPhone String? @db.NVarChar(20)
+  sentToEmail String? @db.NVarChar(100)
+  Orders      Orders  @relation(fields: [orderId], references: [id], onUpdate: NoAction, map: "FK__Invoices__orderI__4222D4EF")
+}
+
+model OrderItems {
+  id        Int      @id(map: "PK__OrderIte__3213E83FB2FA893D") @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  price     Decimal  @db.Decimal(10, 2)
+  Orders    Orders   @relation(fields: [orderId], references: [id], onUpdate: NoAction, map: "FK__OrderItem__order__3A81B327")
+  Products  Products @relation(fields: [productId], references: [id], onUpdate: NoAction, map: "FK__OrderItem__produ__3B75D760")
+}
+
+model Orders {
+  id              Int            @id(map: "PK__Orders__3213E83F11692A5E") @default(autoincrement())
+  userId          Int
+  totalAmount     Decimal        @db.Decimal(10, 2)
+  address         String?        @db.NVarChar(255)
+  paymentMethodId Int
+  statusId        Int
+  createdAt       DateTime?      @db.DateTime
+  Invoices        Invoices[]
+  OrderItems      OrderItems[]
+  PaymentMethods  PaymentMethods @relation(fields: [paymentMethodId], references: [id], onUpdate: NoAction, map: "FK__Orders__paymentM__36B12243")
+  OrderStatus     OrderStatus    @relation(fields: [statusId], references: [id], onUpdate: NoAction, map: "FK__Orders__statusId__37A5467C")
+  Users           Users          @relation(fields: [userId], references: [id], onUpdate: NoAction, map: "FK__Orders__userId__35BCFE0A")
+  Payments        Payments[]
+}
+
+model OrderStatus {
+  id     Int      @id(map: "PK__OrderSta__3213E83F0CF6F327") @default(autoincrement())
+  status String   @unique(map: "UQ__OrderSta__A858923C3A726BD1") @db.NVarChar(20)
+  Orders Orders[]
+}
+
+model PaymentMethods {
+  id     Int      @id(map: "PK__PaymentM__3213E83FECB56CBA") @default(autoincrement())
+  method String   @unique(map: "UQ__PaymentM__84482CA9D8917D89") @db.NVarChar(10)
+  Orders Orders[]
+}
+
+model Payments {
+  id            Int       @id(map: "PK__Payments__3213E83F1DF8187C") @default(autoincrement())
+  orderId       Int
+  transactionId String?   @db.NVarChar(100)
+  status        String?   @db.NVarChar(20)
+  createdAt     DateTime? @db.DateTime
+  Orders        Orders    @relation(fields: [orderId], references: [id], onUpdate: NoAction, map: "FK__Payments__orderI__3F466844")
+}
+
+model Products {
+  id                Int          @id(map: "PK__Products__3213E83FFFC5D360") @default(autoincrement())
+  name              String       @db.NVarChar(100)
+  size              String?      @db.NVarChar(20)
+  price             Decimal      @db.Decimal(10, 2)
+  stock             Int
+  lowStockThreshold Int?
+  createdAt         DateTime?    @db.DateTime
+  OrderItems        OrderItems[]
+}
+
+model UserRoles {
+  id    Int     @id(map: "PK__UserRole__3213E83F2D2C33A6") @default(autoincrement())
+  role  String  @unique(map: "UQ__UserRole__863D214830807E23") @db.NVarChar(20)
+  Users Users[]
+}
+
+model Users {
+  id           Int       @id(map: "PK__Users__3213E83F34081B45") @default(autoincrement())
+  name         String    @db.NVarChar(100)
+  phone        String?   @db.NVarChar(20)
+  email        String?   @db.NVarChar(100)
+  roleId       Int
+  passwordHash String    @db.NVarChar(255)
+  createdAt    DateTime? @db.DateTime
+  Orders       Orders[]
+  UserRoles    UserRoles @relation(fields: [roleId], references: [id], onUpdate: NoAction, map: "FK__Users__roleId__2E1BDC42")
+}

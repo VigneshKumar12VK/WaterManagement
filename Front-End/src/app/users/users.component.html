@@ -1,0 +1,223 @@
+<table class="users-table" *ngIf="!loading && !error">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Type</th>
+      <th>Order History</th>
+      <th>Pending Payments</th>
+      <th>Completed Payments</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of users">
+      <td>{{ user.name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.roleName }}</td>
+      <td>
+        <button (click)="openOrderHistoryModal(user)">View</button>
+      </td>
+      <td>₹{{ user.pendingPayments | number }}</td>
+      <td>₹{{ user.completedPayments | number }}</td>
+      <td>
+        <button class="btn-icon" (click)="openEditUserModal(user)">Edit</button>
+        <button class="btn-icon delete" (click)="confirmDelete(user)">Delete</button>
+        <button *ngIf="user.roleName !== 'admin'" (click)="openCreateOrderModal(user)">Create Order</button>
+      </td>
+    </tr>
+    <tr *ngIf="users.length === 0">
+      <td colspan="7" style="text-align:center; color:#aaa;">No users found.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Order History Modal Template -->
+<ng-template #orderHistoryModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Order History</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="orders.length > 0; else noOrders">
+      <div *ngFor="let order of orders" class="order-card mb-3 p-3 border rounded">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <strong>Order #{{ order.id }}</strong>
+          <span class="badge bg-primary">{{ order.status }}</span>
+        </div>
+        <div class="row mb-2">
+          <div class="col-6">
+            <small class="text-muted">Date:</small> {{ order.date | date:'medium' }}
+          </div>
+          <div class="col-6 text-end">
+            <small class="text-muted">Total:</small> <strong>₹{{ order.amount | number }}</strong>
+          </div>
+        </div>
+        <div class="mb-2">
+          <small class="text-muted">Payment:</small> {{ order.paymentMethod }}
+        </div>
+        <div class="order-items mt-2">
+          <h6>Items:</h6>
+          <ul class="list-group list-group-flush">
+            <li *ngFor="let item of order.items"
+              class="list-group-item d-flex justify-content-between align-items-center px-0">
+              <div>
+                {{ item.productName }}
+                <small class="text-muted">x{{ item.quantity }}</small>
+              </div>
+              <span>₹{{ item.price | number }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <ng-template #noOrders>
+      <p class="text-center text-muted my-3">No orders found for this user.</p>
+    </ng-template>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Close</button>
+  </div>
+</ng-template>
+
+<!-- Add/Edit User Modal -->
+<ng-template #userModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">{{ isEditMode ? 'Edit User' : 'Add User' }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="userForm">
+      <div class="mb-3">
+        <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="name" formControlName="name">
+        <div *ngIf="userForm.get('name')?.invalid && (userForm.get('name')?.dirty || userForm.get('name')?.touched)"
+          class="text-danger">
+          <div *ngIf="userForm.get('name')?.errors?.['required']">Name is required.</div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+        <input type="email" class="form-control" id="email" formControlName="email">
+        <div *ngIf="userForm.get('email')?.invalid && (userForm.get('email')?.dirty || userForm.get('email')?.touched)"
+          class="text-danger">
+          <div *ngIf="userForm.get('email')?.errors?.['required']">Email is required.</div>
+          <div *ngIf="userForm.get('email')?.errors?.['email']">Invalid email format.</div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="phone" class="form-label">Phone <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="phone" formControlName="phone" maxlength="10" pattern="[0-9]*"
+          inputmode="numeric" (keypress)="($event.charCode >= 48 && $event.charCode <= 57)">
+        <div *ngIf="userForm.get('phone')?.invalid && (userForm.get('phone')?.dirty || userForm.get('phone')?.touched)"
+          class="text-danger">
+          <div *ngIf="userForm.get('phone')?.errors?.['required']">Phone is required.</div>
+          <div *ngIf="userForm.get('phone')?.errors?.['maxlength']">Phone cannot exceed 10 digits.</div>
+          <div *ngIf="userForm.get('phone')?.errors?.['pattern']">Phone must be numeric.</div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="role" class="form-label">Role <span class="text-danger">*</span></label>
+        <select class="form-select" id="role" formControlName="roleId">
+          <option *ngFor="let role of roles" [ngValue]="role.id">{{ role.name | titlecase }}</option>
+        </select>
+        <div
+          *ngIf="userForm.get('roleId')?.invalid && (userForm.get('roleId')?.dirty || userForm.get('roleId')?.touched)"
+          class="text-danger">
+          <div *ngIf="userForm.get('roleId')?.errors?.['required']">Role is required.</div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password <span *ngIf="!isEditMode" class="text-danger">*</span></label>
+        <input type="password" vktoggle class="form-control" id="password" formControlName="password"
+          [placeholder]="isEditMode ? 'Leave blank to keep current' : ''">
+        <div
+          *ngIf="userForm.get('password')?.invalid && (userForm.get('password')?.dirty || userForm.get('password')?.touched)"
+          class="text-danger">
+          <div *ngIf="userForm.get('password')?.errors?.['required']">Password is required.</div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="saveUser()">Save</button>
+  </div>
+</ng-template>
+
+<!-- Delete Confirmation Modal -->
+<ng-template #deleteModal let-modal>
+  <div class="modal-body text-center">
+    <p>Are you sure you want to delete this user?</p>
+    <button type="button" class="btn btn-default" (click)="modalRef?.hide()">No</button>
+    <button type="button" class="btn btn-danger" (click)="deleteUser()">Yes</button>
+  </div>
+</ng-template>
+
+<!-- Create Order Modal -->
+<ng-template #createOrderModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Create Order for {{ selectedUserForOrder?.name }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef?.hide()"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="createOrderForm">
+      <div class="mb-3">
+        <label class="form-label">Address</label>
+        <input type="text" class="form-control" formControlName="address">
+      </div>
+
+      <div formArrayName="items">
+        <div *ngFor="let item of items.controls; let i = index" [formGroupName]="i" class="row mb-2 align-items-end">
+          <div class="col-5">
+            <label *ngIf="i === 0" class="form-label">Product</label>
+            <select class="form-select" formControlName="productId">
+              <option value="" disabled>Select Product</option>
+              <option *ngFor="let p of products" [value]="p.id">{{ p.name }} ({{ p.size }}) - ₹{{ p.price }}</option>
+            </select>
+          </div>
+          <div class="col-2">
+            <label *ngIf="i === 0" class="form-label">Qty</label>
+            <input type="number" class="form-control" formControlName="quantity" min="1">
+          </div>
+          <div class="col-3">
+            <label *ngIf="i === 0" class="form-label">Total</label>
+            <input type="text" class="form-control" formControlName="total" readonly>
+          </div>
+          <div class="col-2">
+            <button type="button" class="btn btn-danger btn-sm" (click)="removeItem(i)"
+              *ngIf="items.length > 1">X</button>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-sm btn-outline-primary mb-3" (click)="addItem()">+ Add Item</button>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Payment Method</label>
+          <select class="form-select" formControlName="paymentMethodId">
+            <option value="" disabled>Select Method</option>
+            <option *ngFor="let pm of paymentMethods" [value]="pm.id">{{ pm.method }}</option>
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Order Status</label>
+          <select class="form-select" formControlName="statusId">
+            <option value="" disabled>Select Status</option>
+            <option *ngFor="let s of orderStatuses" [value]="s.id">{{ s.status | titlecase }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
+        <h5>Total Amount:</h5>
+        <h4>₹{{ calculateTotalAmount() | number }}</h4>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="submitOrder()" [disabled]="createOrderForm.invalid">Create
+      Order</button>
+  </div>
+</ng-template>

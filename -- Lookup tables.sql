@@ -91,8 +91,14 @@ select * from Users;
 
 CREATE LOGIN vignesh WITH PASSWORD = 'Test@1234';
 CREATE USER vignesh FOR LOGIN vignesh;
+ALTER ROLE db_owner ADD MEMBER vignesh;
 ALTER ROLE db_datareader ADD MEMBER vignesh;
 ALTER ROLE db_datawriter ADD MEMBER vignesh;
+
+USE WaterManagement;
+CREATE LOGIN Vignesh WITH PASSWORD = 'Test@1234';
+CREATE USER Vignesh FOR LOGIN Vignesh;
+ALTER ROLE db_owner ADD MEMBER Vignesh;
 
 Use WaterManagement;
 ALTER USER vignesh WITH LOGIN = vignesh;
@@ -127,3 +133,43 @@ INSERT INTO Products (name, size, price, stock, lowStockThreshold) VALUES
 ('Cold Pressed Water 500ml', '500ml', 22.00, 140, 10),
 ('Cold Pressed Water 1L', '1L', 38.00, 90, 8);
 
+INSERT INTO Users (name, phone, email, roleId, passwordHash)
+VALUES
+('Raj', '9876543210', 'raj@email.com', 2, '$2b$10$X3ESQc2jz/xjEEtUVsaLPuNWCotbpsQMl72OEfcvp3R9h50jwlkQ2'),
+('Admin', '9999999999', 'admin@email.com', 1, '$2b$10$X3ESQc2jz/xjEEtUVsaLPuNWCotbpsQMl72OEfcvp3R9h50jwlkQ2'),
+('Priya', '9123456780', 'priya@email.com', 3, '$2b$10$X3ESQc2jz/xjEEtUVsaLPuNWCotbpsQMl72OEfcvp3R9h50jwlkQ2');
+
+INSERT INTO Orders (userId, totalAmount, address, paymentMethodId, statusId)
+VALUES
+(1, 2000.00, 'Chennai', 1, 1),   -- Raj - Pending
+(1, 3000.00, 'Chennai', 2, 2),   -- Raj - Paid
+(2, 1500.00, 'Bangalore', 1, 3), -- Admin - Delivered
+(3, 500.00,  'Hyderabad', 2, 2); -- Priya - Paid
+
+INSERT INTO OrderItems (orderId, productId, quantity, price)
+VALUES
+-- Order 1 (Raj, Pending)
+(1, 2, 10, 200.00),
+
+-- Order 2 (Raj, Paid)
+(2, 1, 15, 300.00),
+
+-- Order 3 (Admin, Delivered)
+(3, 3, 3, 150.00),
+
+-- Order 4 (Priya, Paid)
+(4, 1, 2, 40.00);
+
+INSERT INTO Payments (orderId, transactionId, status)
+VALUES
+(1, NULL, 'pending'),
+(2, 'TXN987654', 'paid'),
+(3, 'TXN123456', 'paid'),
+(4, 'TXN654321', 'paid');
+
+INSERT INTO Invoices (orderId, pdfUrl, sentToPhone, sentToEmail)
+VALUES
+(1, NULL, NULL, NULL),
+(2, 'invoice_2.pdf', '9876543210', 'raj@email.com'),
+(3, 'invoice_3.pdf', '9999999999', 'admin@email.com'),
+(4, 'invoice_4.pdf', '9123456780', 'priya@email.com');

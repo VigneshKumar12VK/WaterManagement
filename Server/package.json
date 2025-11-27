@@ -3,14 +3,28 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon --watch src --exec \"node index.js\"",
+    "prisma:generate": "npx prisma generate",
+    "prisma:pull": "npx prisma db pull",
+    "prisma:migrate": "npx prisma migrate dev --name init"
   },
   "dependencies": {
+    "@prisma/adapter-mssql": "^7.0.0",
+    "@prisma/client": "^7.0.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
+    "dotenv": "^17.2.3",
     "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
     "jsonwebtoken": "^9.0.2",
-    "mssql": "^10.0.1"
+    "mssql": "^12.1.0",
+    "zod": "^3.22.2"
+  },
+  "devDependencies": {
+    "@types/mssql": "^9.1.8",
+    "@types/node": "^24.10.1",
+    "nodemon": "^3.1.11",
+    "prisma": "^7.0.0"
   }
 }

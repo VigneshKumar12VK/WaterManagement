@@ -17,20 +17,65 @@
   </div>
 </div>
 
-<!-- Add/Edit Product Modal -->
-<div class="modal-backdrop" *ngIf="showModal">
-  <div class="modal">
-    <h3>{{ editMode ? 'Edit Product' : 'Add Product' }}</h3>
+
+<!-- Add/Edit Product Modal using ngx-bootstrap -->
+<ng-template #productModal>
+  <div class="modal-header">
+    <h5 class="modal-title">{{ editMode ? 'Edit Product' : 'Add Product' }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+  </div>
+  <div class="modal-body">
     <form (ngSubmit)="saveProduct()" #productForm="ngForm">
-      <input type="text" placeholder="Name" [(ngModel)]="modalProduct.name" name="name" required />
-      <input type="text" placeholder="Size" [(ngModel)]="modalProduct.size" name="size" required />
-      <input type="number" placeholder="Price" [(ngModel)]="modalProduct.price" name="price" required min="0" />
-      <input type="number" placeholder="Stock" [(ngModel)]="modalProduct.stock" name="stock" required min="0" />
-      <input type="number" placeholder="Low Stock Threshold" [(ngModel)]="modalProduct.lowStockThreshold" name="lowStockThreshold" required min="0" />
-      <div class="modal-actions">
-        <button type="submit" class="add-btn">{{ editMode ? 'Update' : 'Add' }}</button>
-        <button type="button" class="delete-btn" (click)="closeModal()">Cancel</button>
+      <div class="mb-3">
+        <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="name" placeholder="Name" [(ngModel)]="modalProduct.name" name="name"
+          required #name="ngModel" />
+        <div *ngIf="name.invalid && (name.dirty || name.touched)" class="text-danger">
+          <div *ngIf="name.errors?.['required']">Name is required.</div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="size" class="form-label">Size <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="size" placeholder="Size" [(ngModel)]="modalProduct.size" name="size"
+          required #size="ngModel" />
+        <div *ngIf="size.invalid && (size.dirty || size.touched)" class="text-danger">
+          <div *ngIf="size.errors?.['required']">Size is required.</div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
+        <input type="number" class="form-control" id="price" placeholder="Price" [(ngModel)]="modalProduct.price"
+          name="price" required min="0" #price="ngModel" />
+        <div *ngIf="price.invalid && (price.dirty || price.touched)" class="text-danger">
+          <div *ngIf="price.errors?.['required']">Price is required.</div>
+          <div *ngIf="price.errors?.['min']">Price must be non-negative.</div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="stock" class="form-label">Stock <span class="text-danger">*</span></label>
+        <input type="number" class="form-control" id="stock" placeholder="Stock" [(ngModel)]="modalProduct.stock"
+          name="stock" required min="0" #stock="ngModel" />
+        <div *ngIf="stock.invalid && (stock.dirty || stock.touched)" class="text-danger">
+          <div *ngIf="stock.errors?.['required']">Stock is required.</div>
+          <div *ngIf="stock.errors?.['min']">Stock must be non-negative.</div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="lowStockThreshold" class="form-label">Low Stock Threshold <span class="text-danger">*</span></label>
+        <input type="number" class="form-control" id="lowStockThreshold" placeholder="Low Stock Threshold"
+          [(ngModel)]="modalProduct.lowStockThreshold" name="lowStockThreshold" required min="0"
+          #lowStockThreshold="ngModel" />
+        <div *ngIf="lowStockThreshold.invalid && (lowStockThreshold.dirty || lowStockThreshold.touched)"
+          class="text-danger">
+          <div *ngIf="lowStockThreshold.errors?.['required']">Low Stock Threshold is required.</div>
+          <div *ngIf="lowStockThreshold.errors?.['min']">Threshold must be non-negative.</div>
+        </div>
       </div>
     </form>
   </div>
-</div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="saveProduct()">{{ editMode ? 'Update' : 'Add'
+      }}</button>
+  </div>
+</ng-template>

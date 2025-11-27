@@ -2,11 +2,16 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './login.component';
 import { AdminDashboardComponent } from './admin/dashboard.component';
 import { SiteLayoutComponent } from './site-layout.component';
+import { authGuard } from './auth.guard';
+
+import { guestGuard } from './guest.guard';
 
 export const routes: Routes = [
-	{ path: '', component: LoginComponent },
+	{ path: '', redirectTo: 'login', pathMatch: 'full' },
+	{ path: 'login', component: LoginComponent, canActivate: [guestGuard] },
 	{
 		path: '',
+
 		component: SiteLayoutComponent,
 		children: [
 			{ path: 'dashboard', component: AdminDashboardComponent },

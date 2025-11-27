@@ -5,11 +5,11 @@ import { BehaviorSubject, map } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/auth';
+  private apiUrl = 'http://localhost:3000/auth/v1';
   private tokenKey = 'jwt_token';
   public isLoggedIn$ = new BehaviorSubject<boolean>(this.hasToken());
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) { }
 
   login(email: string, password: string) {
     return this.http.post<{ token: string }>(`${this.apiUrl}/login`, { email, password })
